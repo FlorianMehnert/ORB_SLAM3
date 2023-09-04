@@ -63,9 +63,6 @@ public:
     cv::Mat GetImage(const sensor_msgs::ImageConstPtr &img_msg);
     void SyncWithImu();
 
-    //method for setting ROS publisher
-    void SetPub(ros::Publisher* pub);
-
     queue<sensor_msgs::ImageConstPtr> imgLeftBuf, imgRightBuf;
     std::mutex mBufMutexLeft,mBufMutexRight;
    
@@ -222,9 +219,6 @@ int main(int argc, char **argv)
     odom.pose.pose.orientation.z = rotted.z();
     odom.pose.pose.orientation.w = rotted.w();
 
-    double dt = (current_time - last_time).toSec();
-    const Sophus::SE3f diff = Tcw * prevTcw;
-
     // odom.twist.twist.linear.x = diff.translation()[1]/dt;
     // odom.twist.twist.linear.y = -diff.translation()[0]/dt;
     // odom.twist.twist.linear.z = diff.translation()[2]/dt;
@@ -249,12 +243,6 @@ int main(int argc, char **argv)
   }
 
   return 0;
-}
-
-//method for assigning publisher
-void ImageGrabber::SetPub(ros::Publisher* pub)
-{
-  orb_pub = pub;
 }
 
 void ImageGrabber::GrabImageLeft(const sensor_msgs::ImageConstPtr &img_msg)
