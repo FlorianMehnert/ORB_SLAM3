@@ -21,16 +21,20 @@
 #include<algorithm>
 #include<fstream>
 #include<chrono>
+#include<vector>
+#include<queue>
 
 #include<ros/ros.h>
 #include <cv_bridge/cv_bridge.h>
 #include <message_filters/subscriber.h>
 #include <message_filters/time_synchronizer.h>
 #include <message_filters/sync_policies/approximate_time.h>
+#include<nav_msgs/Odometry.h>
 
 #include<opencv2/core/core.hpp>
 
 #include"../../../include/System.h"
+#include"../include/ImuTypes.h"
 
 using namespace std;
 
