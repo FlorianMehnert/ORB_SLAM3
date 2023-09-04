@@ -154,6 +154,7 @@ int main(int argc, char **argv)
         cv::initUndistortRectifyMap(K_r,D_r,R_r,P_r.rowRange(0,3).colRange(0,3),cv::Size(cols_r,rows_r),CV_32F,igb.M1r,igb.M2r);
     }
 
+  // tell the master that we are going to publish on the topic orb_pose, 1.returns the publisher object 2. unadvertising if out of scope
   ros::Publisher pose_pub = n.advertise<geometry_msgs::PoseStamped>("orb_pose", 100);
 
   // Maximum delay, 5 seconds
@@ -161,7 +162,6 @@ int main(int argc, char **argv)
   ros::Subscriber sub_img_left = n.subscribe("/camera/left/image_raw", 100, &ImageGrabber::GrabImageLeft,&igb);
   ros::Subscriber sub_img_right = n.subscribe("/camera/right/image_raw", 100, &ImageGrabber::GrabImageRight,&igb);
 
-  igb.SetPub(&pose_pub);
 
   std::thread sync_thread(&ImageGrabber::SyncWithImu,&igb);
 
@@ -243,6 +243,7 @@ int main(int argc, char **argv)
      * in the constructor above.
      */
     odom_pub.publish(odom);
+    pose_pub.publish(prevTcw);
 
     loop_rate.sleep();
   }
