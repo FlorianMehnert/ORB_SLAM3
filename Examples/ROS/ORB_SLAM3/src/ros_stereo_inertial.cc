@@ -151,13 +151,10 @@ int main(int argc, char **argv)
         cv::initUndistortRectifyMap(K_r,D_r,R_r,P_r.rowRange(0,3).colRange(0,3),cv::Size(cols_r,rows_r),CV_32F,igb.M1r,igb.M2r);
     }
 
-  // tell the master that we are going to publish on the topic orb_pose, 1.returns the publisher object 2. unadvertising if out of scope
-
   // Maximum delay, 5 seconds
   ros::Subscriber sub_imu = n.subscribe("/imu", 1000, &ImuGrabber::GrabImu, &imugb); 
   ros::Subscriber sub_img_left = n.subscribe("/camera/left/image_raw", 100, &ImageGrabber::GrabImageLeft,&igb);
   ros::Subscriber sub_img_right = n.subscribe("/camera/right/image_raw", 100, &ImageGrabber::GrabImageRight,&igb);
-
 
   std::thread sync_thread(&ImageGrabber::SyncWithImu,&igb);
 
@@ -165,7 +162,6 @@ int main(int argc, char **argv)
 
   ros::Publisher odom_pub = n.advertise<nav_msgs::Odometry>("odom", 100);
   tf::TransformBroadcaster odom_broadcaster;
-  ros::Publisher pose_pub = n.advertise<geometry_msgs::PoseStamped>("orb_pose", 100);
 
   Eigen::Matrix3f rotm;
   rotm << 0,1,0,-1,0,0,0,0,1;
@@ -218,10 +214,8 @@ int main(int argc, char **argv)
     odom.pose.pose.orientation.y = rotted.y();
     odom.pose.pose.orientation.z = rotted.z();
     odom.pose.pose.orientation.w = rotted.w();
-
-    // odom.twist.twist.linear.x = diff.translation()[1]/dt;
-    // odom.twist.twist.linear.y = -diff.translation()[0]/dt;
-    // odom.twist.twist.linear.z = diff.translation()[2]/dt;
+    double dt = (current_time - last_time).toSec();
+    const Sophus::SE3f diff = Tcw * prevTcw;
     odom.twist.twist.linear.x = frame.GetVelocity()[1];
     odom.twist.twist.linear.y = -frame.GetVelocity()[0];
     odom.twist.twist.linear.z = frame.GetVelocity()[2];
@@ -237,7 +231,6 @@ int main(int argc, char **argv)
      * in the constructor above.
      */
     odom_pub.publish(odom);
-    pose_pub.publish(prevTcw);
 
     loop_rate.sleep();
   }
