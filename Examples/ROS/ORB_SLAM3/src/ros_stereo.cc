@@ -167,7 +167,7 @@ void ImageGrabber::GrabStereo(const sensor_msgs::ImageConstPtr& msgLeft,const se
 
         cv::Mat Rwc = Tcw.rowRange(0,3).colRange(0,3).t(); // Rotation information
         cv::Mat twc = -Rwc*Tcw.rowRange(0,3).col(3); // translation information
-        vector<float> q = ORB_SLAM2::Converter::toQuaternion(Rwc);
+        vector<float> q = ORB_SLAM3::Converter::toQuaternion(Rwc);
 
         tf::Transform new_transform;
         new_transform.setOrigin(tf::Vector3(twc.at<float>(0, 0), twc.at<float>(0, 1), twc.at<float>(0, 2)));
