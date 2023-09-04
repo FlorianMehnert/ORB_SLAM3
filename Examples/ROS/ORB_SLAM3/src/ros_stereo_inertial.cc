@@ -166,6 +166,7 @@ int main(int argc, char **argv)
 
   ros::Publisher odom_pub = n.advertise<nav_msgs::Odometry>("odom", 100);
   tf::TransformBroadcaster odom_broadcaster;
+  ros::Publisher pose_pub = n.advertise<geometry_msgs::PoseStamped>("orb_pose", 100);
 
   Eigen::Matrix3f rotm;
   rotm << 0,1,0,-1,0,0,0,0,1;
