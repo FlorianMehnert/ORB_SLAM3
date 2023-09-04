@@ -152,7 +152,6 @@ int main(int argc, char **argv)
     }
 
   // tell the master that we are going to publish on the topic orb_pose, 1.returns the publisher object 2. unadvertising if out of scope
-  ros::Publisher pose_pub = n.advertise<geometry_msgs::PoseStamped>("orb_pose", 100);
 
   // Maximum delay, 5 seconds
   ros::Subscriber sub_imu = n.subscribe("/imu", 1000, &ImuGrabber::GrabImu, &imugb); 
